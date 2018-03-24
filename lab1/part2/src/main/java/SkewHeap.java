@@ -1,5 +1,3 @@
-import java.io.File;
-
 public class SkewHeap {
 
     private SkewNode root = null;
@@ -107,19 +105,6 @@ public class SkewHeap {
     }
 
     public static void main(String[] args) {
-        StringBuilder sb = new StringBuilder();
-        SkewHeap heap = new SkewHeap(sb);
-        heap.insert(1);
-        heap.insert(3);
-        heap.insert(2);
-//        heap.removeSmallest();
-        System.out.println(sb.toString());
-//        heap.insert(7);
-//        System.out.println(heap.getState());
-//        heap.insert(8);
-//        System.out.println(heap.getState());
-//        heap.insert(2);
-//        System.out.println(heap.getState());
     }
 }
 

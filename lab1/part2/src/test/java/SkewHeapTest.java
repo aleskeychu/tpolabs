@@ -115,7 +115,29 @@ public class SkewHeapTest {
     }
 
     @Test
-    public void testMerge() {
+    public void testMergeRemoveSmallest() {
+        try {
+            String sample = "[1;n;n]\n" +
+                    "[2;n;n]\n" +
+                    "[1;2;n][2;n;n]\n" +
+                    "[2;n;n]\n\n";
+            StringBuilder sb = new StringBuilder();
+            heap = new SkewHeap(sb);
+            Assert.assertEquals(getState.invoke(heap), "");
+            heap.insert(1);
+            heap.insert(2);
+            heap.removeSmallest();
+            heap.removeSmallest();
+            heap.removeSmallest();
+            Assert.assertEquals(sb.toString(), sample);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            System.out.println("Error: invocation getState");
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testMergeInsert() {
         try {
             String sample = "[1;n;n]\n" +
                     "[3;n;n]\n" +
