@@ -9,7 +9,6 @@ class Cos {
         while (Math.abs(val) >= 2 * Math.PI) {
             val -= delta;
         }
-        System.out.println(val);
         return val;
     }
 
@@ -20,7 +19,6 @@ class Cos {
         for (int i = 2; i < 20; i += 2 ) {
             xn = Math.pow(-1, i / 2) * Math.pow(x, i) / factorial(i);
             sum += xn;
-            System.out.println("xn: " + xn + " sum: " + sum);
         }
         return sum;
     }
