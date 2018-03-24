@@ -34,7 +34,6 @@ public class SkewHeapTest {
     @Test
     public void testInsert() {
         try {
-            Assert.assertEquals(getState.invoke(heap), "");
             heap.insert(5);
             Assert.assertEquals(getState.invoke(heap), "[5;n;n]");
             heap.insert(3);
@@ -47,6 +46,16 @@ public class SkewHeapTest {
             Assert.assertEquals(getState.invoke(heap), "[3;4;5][4;7;n][7;n;n][5;6;n][6;n;n]");
 
         } catch (IllegalAccessException | InvocationTargetException e) {
+            System.out.println("Error: invocation getState");
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testEmptyHeap() {
+        try {
+            Assert.assertEquals(getState.invoke(heap), "");
+        } catch (Exception e) {
             System.out.println("Error: invocation getState");
             Assert.fail();
         }
@@ -69,7 +78,6 @@ public class SkewHeapTest {
     @Test
     public void testRemoveSmallest() {
         try {
-            Assert.assertEquals(getState.invoke(heap), "");
             heap.insert(1);
             heap.insert(3);
             heap.insert(5);
@@ -98,7 +106,6 @@ public class SkewHeapTest {
     @Test
     public void testClear() {
         try {
-            Assert.assertEquals(getState.invoke(heap), "");
             heap.insert(1);
             heap.insert(3);
             heap.insert(5);

@@ -13,7 +13,7 @@ public class SkewHeap {
         if (node == null) {
             return 0;
         }
-        return 1 + getSize(node.getLeft()) + getSize(node.getRight());
+        return getSize(node.getLeft()) + getSize(node.getRight());
     }
 
     public int getSize() {
