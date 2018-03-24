@@ -1,0 +1,39 @@
+class Cos {
+
+
+    private static double canonicalize(double val) {
+        double delta = 2 * Math.PI;
+        if (val < 0) {
+            delta = -delta;
+        }
+        while (Math.abs(val) > 2 * Math.PI) {
+            val -= delta;
+        }
+        return val;
+    }
+
+    public static double calc(double x) {
+        System.out.println(x);
+        x = canonicalize(x);
+        System.out.println(x);
+        double sum = 1;
+        double xn = 1;
+        for (int i = 2; i < 26; i += 2 ) {
+            xn = Math.pow(-1, i / 2) * Math.pow(x, i) / factorial(i);
+            sum += xn;
+        }
+        return sum;
+    }
+
+    private static long factorial(int n) {
+        long base = 1;
+        for (int i = 2; i <= n; i++) {
+            base *= i;
+        }
+        return base;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Cos.calc(Math.PI));
+    }
+}
