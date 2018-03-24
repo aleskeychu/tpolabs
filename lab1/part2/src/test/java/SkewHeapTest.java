@@ -13,7 +13,7 @@ public class SkewHeapTest {
     private Method getState;
 
     @Before
-    private void setup() {
+    public void setup() {
         getState = null;
         heap = new SkewHeap();
         try {
@@ -26,7 +26,7 @@ public class SkewHeapTest {
     }
 
     @After
-    private void teardown() {
+    public void teardown() {
         getState = null;
         heap = null;
     }
@@ -117,7 +117,11 @@ public class SkewHeapTest {
     @Test
     public void testMerge() {
         try {
-            String sample = "";
+            String sample = "[1;n;n]\n" +
+                    "[3;n;n]\n" +
+                    "[1;3;n][3;n;n]\n" +
+                    "[2;n;n]\n" +
+                    "[1;2;3][2;n;n][3;n;n]\n";
             StringBuilder sb = new StringBuilder();
             heap = new SkewHeap(sb);
             Assert.assertEquals(getState.invoke(heap), "");

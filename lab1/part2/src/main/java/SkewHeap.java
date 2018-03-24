@@ -107,16 +107,19 @@ public class SkewHeap {
     }
 
     public static void main(String[] args) {
-        SkewHeap heap = new SkewHeap();
-        heap.getState();
-        heap.insert(5);
-        System.out.println(heap.getState());
-        heap.insert(7);
-        System.out.println(heap.getState());
-        heap.insert(8);
-        System.out.println(heap.getState());
+        StringBuilder sb = new StringBuilder();
+        SkewHeap heap = new SkewHeap(sb);
+        heap.insert(1);
+        heap.insert(3);
         heap.insert(2);
-        System.out.println(heap.getState());
+//        heap.removeSmallest();
+        System.out.println(sb.toString());
+//        heap.insert(7);
+//        System.out.println(heap.getState());
+//        heap.insert(8);
+//        System.out.println(heap.getState());
+//        heap.insert(2);
+//        System.out.println(heap.getState());
     }
 }
 
