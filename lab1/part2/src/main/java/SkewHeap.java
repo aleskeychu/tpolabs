@@ -1,10 +1,15 @@
-
+import java.io.File;
 
 public class SkewHeap {
 
     private SkewNode root = null;
+    private StringBuilder logSb;
 
+    public SkewHeap() {}
 
+    public SkewHeap(StringBuilder sb) {
+        this.logSb = sb;
+    }
 
     private static int getSize(SkewNode node) {
         if (node == null) {
@@ -17,28 +22,42 @@ public class SkewHeap {
         return getSize(root);
     }
 
-    private static SkewNode merge(SkewNode that, SkewNode other) {
+    private static void writeStateToLog(SkewNode node, StringBuilder log) {
+        if (log == null) return;
+        getState(node, log);
+        log.append("\n");
+    }
+
+    private static SkewNode merge(SkewNode that, SkewNode other, StringBuilder log) {
         if (that == null) {
+            writeStateToLog(other, log);
             return other;
         } else if (other == null) {
+            writeStateToLog(that, log);
             return that;
         }
 
         if (that.getValue() < other.getValue()) {
             SkewNode temp = that.getLeft();
-            that.setLeft(merge(that.getRight(), other));
+            that.setLeft(merge(that.getRight(), other, log));
             that.setRight(temp);
+            writeStateToLog(that, log);
             return that;
         } else {
             SkewNode temp = other.getLeft();
-            other.setLeft(merge(other.getRight(), that));
+            other.setLeft(merge(other.getRight(), that, log));
             other.setRight(temp);
+            writeStateToLog(other, log);
             return other;
         }
     }
 
+    private static SkewNode merge(SkewNode that, SkewNode other) {
+        return merge(that, other, null);
+    }
+
     public void insert(int value) {
-        root = merge(root, new SkewNode(value));
+        root = merge(root, new SkewNode(value), logSb);
     }
 
     public Integer removeSmallest() {
@@ -46,7 +65,7 @@ public class SkewHeap {
             return null;
         }
         SkewNode temp = root;
-        root = merge(root.getLeft(), root.getRight());
+        root = merge(root.getLeft(), root.getRight(), logSb);
         return temp.getValue();
     }
 

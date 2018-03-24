@@ -1,4 +1,6 @@
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -6,10 +8,14 @@ import java.lang.reflect.Method;
 
 public class SkewHeapTest {
 
-    @Test
-    public void testInsert() {
-        Method getState = null;
-        SkewHeap heap = new SkewHeap();
+    private SkewHeap heap;
+
+    private Method getState;
+
+    @Before
+    private void setup() {
+        getState = null;
+        heap = new SkewHeap();
         try {
             getState = heap.getClass().getDeclaredMethod("getState");
             getState.setAccessible(true);
@@ -17,6 +23,16 @@ public class SkewHeapTest {
             System.out.println("Error: no getState method");
             Assert.fail();
         }
+    }
+
+    @After
+    private void teardown() {
+        getState = null;
+        heap = null;
+    }
+
+    @Test
+    public void testInsert() {
         try {
             Assert.assertEquals(getState.invoke(heap), "");
             heap.insert(5);
@@ -52,15 +68,6 @@ public class SkewHeapTest {
 
     @Test
     public void testRemoveSmallest() {
-        Method getState = null;
-        SkewHeap heap = new SkewHeap();
-        try {
-            getState = heap.getClass().getDeclaredMethod("getState");
-            getState.setAccessible(true);
-        } catch (NoSuchMethodException e) {
-            System.out.println("Error: no getState method");
-            Assert.fail();
-        }
         try {
             Assert.assertEquals(getState.invoke(heap), "");
             heap.insert(1);
@@ -86,5 +93,42 @@ public class SkewHeapTest {
         }
     }
 
+
+
+    @Test
+    public void testClear() {
+        try {
+            Assert.assertEquals(getState.invoke(heap), "");
+            heap.insert(1);
+            heap.insert(3);
+            heap.insert(5);
+            heap.insert(2);
+            heap.insert(4);
+            Assert.assertEquals(getState.invoke(heap),
+                    "[1;4;2][4;5;n][5;n;n][2;3;n][3;n;n]");
+            heap.clear();
+            Assert.assertEquals(getState.invoke(heap), "");
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            System.out.println("Error: invocation getState");
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testMerge() {
+        try {
+            String sample = "";
+            StringBuilder sb = new StringBuilder();
+            heap = new SkewHeap(sb);
+            Assert.assertEquals(getState.invoke(heap), "");
+            heap.insert(1);
+            heap.insert(3);
+            heap.insert(2);
+            Assert.assertEquals(sb.toString(), sample);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            System.out.println("Error: invocation getState");
+            Assert.fail();
+        }
+    }
 
 }
