@@ -13,9 +13,7 @@ class Cos {
     }
 
     public static double calc(double x) {
-        System.out.println(x);
         x = canonicalize(x);
-        System.out.println(x);
         double sum = 1;
         double xn = 1;
         for (int i = 2; i < 26; i += 2 ) {
