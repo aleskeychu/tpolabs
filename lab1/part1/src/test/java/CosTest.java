@@ -48,4 +48,16 @@ public class CosTest {
         double val = Math.PI / 6;
         Assert.assertEquals(Cos.calc(val), Math.cos(val), eps);
     }
+
+    @Test
+    public void testPeriodLeft() {
+        double val = -10 * Math.PI;
+        Assert.assertEquals(Cos.calc(val), Math.cos(val), eps);
+    }
+
+    @Test
+    public void testPeriodRight() {
+        double val = 13 * Math.PI;
+        Assert.assertEquals(Cos.calc(val), Math.cos(val), eps);
+    }
 }
