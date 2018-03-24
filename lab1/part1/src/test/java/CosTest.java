@@ -14,7 +14,19 @@ public class CosTest {
     }
 
     @Test
+    public void testSecondLeftEdge() {
+        double val = - Math.PI / 2;
+        Assert.assertEquals(Cos.calc(val), Math.cos(val), eps);
+    }
+
+    @Test
     public void testRightEdge() {
+        double val = Math.PI;
+        Assert.assertEquals(Cos.calc(val), Math.cos(val), eps);
+    }
+
+    @Test
+    public void testSecondRightEdge() {
         double val = Math.PI;
         Assert.assertEquals(Cos.calc(val), Math.cos(val), eps);
     }
