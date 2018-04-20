@@ -3,7 +3,7 @@ from decimal import Decimal
 
 
 def ln(x):
-    max_iterations = 2000
+    max_iterations = 2500
     if x <= 0:
         raise ValueError("There is no log for negative number")
 
