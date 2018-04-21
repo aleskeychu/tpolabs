@@ -21,5 +21,10 @@ class TestSin(unittest.TestCase):
     def test_negative(self):
         self.assertAlmostEqual(sin.sin(20), std_sin(20), 4)
 
+    def test_many_negatives(self):
+        for x in range(-1, -10, -1):
+            self.assertAlmostEqual(sin.sin(x), std_sin(x), 4)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -39,7 +39,7 @@ def sin(x):
     # if the number is negative change the sign of the answer
     sign = -1 if x < 0 else 1
     # but x mod PI is not even -- change the sign again
-    if (x // pi) % 2 != 0:
+    if (abs(x) * 57.3 // 180) % 2 != 0:
         sign = 1 if sign == -1 else -1
 
     return sign * float(sin_part + cos_part)
