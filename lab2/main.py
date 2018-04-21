@@ -1,23 +1,28 @@
-from sin import sin
-from logs import log_base_5, log_base_10, ln
+from lab2.sin import sin
+from lab2.logs import Logs
 
 
-def calculate(x):
-    if x <= 0:
-        result = sin(x)
-    else:
-        numerator = pow(pow(log_base_10(x) * log_base_5(x), 2), 2)
-        denominator = (ln(x) - log_base_10(x)) * ln(x)
+class BigFunction:
 
-        result = pow(numerator / denominator, 3)
+    def sin(self, x):
+        return sin(x)
 
-    return result
+    def log_base_5(self, x):
+        return Logs().log_base_5(x)
 
+    def log_base_10(self, x):
+        return Logs().log_base_10(x)
 
-def main():
-    x = -10
-    print(calculate(x))
+    def ln(self, x):
+        return Logs().ln(x)
 
+    def calculate(self, x):
+        if x <= 0:
+            result = self.sin(x)
+        else:
+            numerator = pow(pow(self.log_base_10(x) * self.log_base_5(x), 2), 2)
+            denominator = (self.ln(x) - self.log_base_10(x)) * self.ln(x)
 
-if __name__ == "__main__":
-    main()
+            result = pow(numerator / denominator, 3)
+
+        return result
