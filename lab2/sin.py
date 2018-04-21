@@ -1,6 +1,5 @@
 from decimal import Decimal
-from cmath import pi, inf
-import math
+from cmath import pi
 
 import scipy as sp
 

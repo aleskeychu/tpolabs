@@ -2,7 +2,7 @@ import unittest
 import sys
 from math import sin as std_sin
 
-import sin
+from lab2 import sin
 
 class TestSin(unittest.TestCase):
 
