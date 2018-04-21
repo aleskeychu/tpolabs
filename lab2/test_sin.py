@@ -3,6 +3,7 @@ import sys
 from math import sin as std_sin
 
 from lab2 import sin
+from lab2.dump import dump
 
 class TestSin(unittest.TestCase):
 

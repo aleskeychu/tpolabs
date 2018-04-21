@@ -34,8 +34,10 @@ def dump(func, start, end, step):
 
 
 def _write2csv(filename, obj):
+    p = list(obj[0].keys())
+    other = p[0] if p[1] == 'x' else p[1]
     with open(filename, "w+") as fp:
-        writer = DictWriter(fp, fieldnames=list(obj[0].keys()))
+        writer = DictWriter(fp, fieldnames=(p[0], other))
         writer.writeheader()
         for o in obj:
             writer.writerow(o)
