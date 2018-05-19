@@ -2,10 +2,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -26,7 +23,7 @@ public class EmailTest {
     private String body;
     private String configName = "config.properties";
 
-    private long wdwTimeout = 60;
+    private long wdwTimeout = 20;
 
     @Before
     public void setup() {
@@ -52,6 +49,7 @@ public class EmailTest {
         System.setProperty("webdriver.chrome.driver", driverPath);
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.manage().window().setSize(new Dimension(1920, 1200));
     }
 
     @After
@@ -63,21 +61,34 @@ public class EmailTest {
     }
 
     synchronized private void inputIntoLogin(String login, String password) {
+        WebElement iframe = null;
+        try {
+            iframe = new WebDriverWait(driver, wdwTimeout)
+                    .until(ExpectedConditions.presenceOfElementLocated(
+                            By.xpath("//iframe[@class='ag-popup__frame__layout__iframe']")
+                    ));
+        } catch (TimeoutException e) {
+            Assert.fail();
+        }
+        driver.switchTo().frame(iframe);
         WebElement loginElem = new WebDriverWait(driver, wdwTimeout)
                 .until(ExpectedConditions.presenceOfElementLocated(
                         By.xpath("//input[@type='email' and @name='Username']")
                 ));
+
         loginElem.clear();
         loginElem.sendKeys(login);
+
+
         WebElement passwordElem = driver.findElement(
                 By.xpath("//input[@type='password' and @name='Password']"));
         passwordElem.clear();
         passwordElem.sendKeys(password);
-        driver.findElement(By.xpath("//div[@class='login-row last'//button[@type='submit']")).click();
+        driver.findElement(By.xpath("//div[@class='b-form-field__input']//span[@class='btn__text']")).click();
     }
 
     private void fillEmailFields() {
-        driver.findElement(By.xpath("//a[@class='b-toolbar__btn js-shortcut']/span[text()='Написать письмо']")).click();
+        driver.findElement(By.xpath("(//a[@class='b-toolbar__btn js-shortcut']/span[contains(@class, 'b-toolbar__btn__text')])[1]")).click();
         try {
             WebElement destinationElem = new WebDriverWait(driver, wdwTimeout)
                     .until(ExpectedConditions.presenceOfElementLocated(
@@ -85,8 +96,12 @@ public class EmailTest {
                                     "//textarea[@data-original-name='To']")
                     ));
             destinationElem.sendKeys(destination);
+
+            WebElement bodyIframe = driver.findElement(By.xpath("//iframe[contains(@id, 'composeEditor')]"));
+            driver.switchTo().frame(bodyIframe);
             WebElement bodyElem = driver.findElement(By.xpath("//body[contains(@class, 'mceContentBody')]"));
             bodyElem.sendKeys(body);
+            driver.switchTo().defaultContent();
         } catch (TimeoutException e) {
 
         }
@@ -99,7 +114,7 @@ public class EmailTest {
         try {
             WebElement elem = new WebDriverWait(driver, wdwTimeout)
                     .until(ExpectedConditions.presenceOfElementLocated(
-                            By.xpath("//a[@class='b-toolbar__btn js-shortcut']/span[text()='Написать письмо']")
+                            By.xpath("//a[@class='b-toolbar__btn js-shortcut']/span[contains(@class, 'b-toolbar__btn__text')]")
                     ));
         } catch (TimeoutException e) {
             Assert.fail();
@@ -125,11 +140,16 @@ public class EmailTest {
         loginSuccess();
         fillEmailFields();
         try {
-            WebElement sendElem = driver.findElement(By.xpath("//span[@class='b-toolbar__btn__text' and text()='Отправить'][1]"));
+//            try {
+//                Thread.sleep(200000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+            WebElement sendElem = driver.findElement(By.xpath("//div[@data-name='send']/span[@class='b-toolbar__btn__text']"));
             sendElem.click();
             new WebDriverWait(driver, wdwTimeout)
                     .until(ExpectedConditions.presenceOfElementLocated(
-                            By.xpath("//div[@class='message-sent__title]")
+                            By.xpath("//div[@class='message-sent__title']")
                     ));
         } catch (TimeoutException e) {
             Assert.fail();
@@ -143,45 +163,64 @@ public class EmailTest {
                 By.xpath("//div[@id='b-letters']/div[@class='b-datalists']//div[contains(@class, 'js-item-checkbox b-datalist__item__cbx')][1]")
         );
         checkboxElem.click();
-        wait(5);
+        Thread.sleep(5000);
         WebElement deleteElem = driver.findElement(
-                By.xpath("//div[@class='b-toolbar__item']//span[text()='Удалить'][1]")
+                By.xpath("(//div[@data-name='remove']/span[contains(@class, 'b-toolbar__btn__text')])[1]")
         );
         deleteElem.click();
-        wait(5);
-        Assert.assertFalse(checkboxElem.isDisplayed());
+        Thread.sleep(5000);
+        try {
+            checkboxElem.isDisplayed();
+        } catch (StaleElementReferenceException e) {
+            return;
+        }
+        Assert.fail();
     }
 
     @Test
     public void archiveEmail() throws InterruptedException {
         loginSuccess();
         WebElement checkboxElem = driver.findElement(
-                By.xpath("//div[@id='b-letters']/div[@class='b-datalists']//div[contains(@class, 'js-item-checkbox b-datalist__item__cbx')][1]")
+                By.xpath("(//div[@id='b-letters']/div[@class='b-datalists']//div[contains(@class, 'js-item-checkbox b-datalist__item__cbx')])[1]")
         );
         checkboxElem.click();
-        wait(5);
+        Thread.sleep(5000);
         WebElement archiveElem = driver.findElement(
-                By.xpath("//div[@class='b-toolbar__item']//span[text()='В архив'][1]")
+                By.xpath("(//div[@data-name='archive']//span[contains(@class, 'b-toolbar__btn__text')])[1]")
         );
         archiveElem.click();
-        wait(5);
-        Assert.assertFalse(checkboxElem.isDisplayed());
+        Thread.sleep(5000);
+        try {
+            checkboxElem.isDisplayed();
+        } catch (StaleElementReferenceException e) {
+            return;
+        }
+        Assert.fail();
     }
 
-    @Test
     public void sendToSpam() throws InterruptedException {
-        loginSuccess();
         WebElement checkboxElem = driver.findElement(
                 By.xpath("//div[@id='b-letters']/div[@class='b-datalists']//div[contains(@class, 'js-item-checkbox b-datalist__item__cbx')][1]")
         );
         checkboxElem.click();
-        wait(5);
+        Thread.sleep(5000);
         WebElement archiveElem = driver.findElement(
-                By.xpath("//div[contains(@class, 'b-toolbar__item')]//span[text()='Спам'][1]")
+                By.xpath("(//div[@data-name='spam']//span[contains(@class, 'b-toolbar__btn__text')])[1]")
         );
         archiveElem.click();
-        wait(5);
-        Assert.assertFalse(checkboxElem.isDisplayed());
+        Thread.sleep(5000);
+        try {
+            checkboxElem.isDisplayed();
+        } catch (StaleElementReferenceException e) {
+            return;
+        }
+        Assert.fail();
+    }
+
+    @Test
+    public void testSendToSpam() throws InterruptedException {
+        loginSuccess();
+        sendToSpam();
     }
 
     @Test
@@ -189,16 +228,24 @@ public class EmailTest {
         loginSuccess();
         sendToSpam();
         WebElement clearSpamElem = driver.findElement(
-            By.xpath("//a[@href='/messages/spam']//span[text()='очистить']")
+            By.xpath("//a[@href='/messages/spam/']/span[@data-name='clear-folder']")
         );
         clearSpamElem.click();
         WebElement confirmClearElem = new WebDriverWait(driver, wdwTimeout)
-                .until(ExpectedConditions.presenceOfElementLocated(
-                        By.xpath("//div[contains(@class, 'balloon_content')]//span[@class='btn__text' and text()='Очистить']")
+                .until(ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath("//div[@class='balloon__message']//span[@class='btn__text']")
                 ));
         confirmClearElem.click();
-        Assert.assertFalse(clearSpamElem.isDisplayed());
+        Thread.sleep(5000);
+        try {
+            clearSpamElem.isDisplayed();
+        } catch (StaleElementReferenceException e) {
+            return;
+        }
+        Assert.fail();
     }
+
+    //TODO the following
 
     @Test
     public void testSaveToDraft() throws InterruptedException {
