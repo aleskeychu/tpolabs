@@ -23,7 +23,7 @@ public class EmailTest {
     private String body;
     private String configName = "config.properties";
 
-    private long wdwTimeout = 20;
+    private long wdwTimeout = 10;
 
     @Before
     public void setup() {
@@ -127,8 +127,8 @@ public class EmailTest {
         inputIntoLogin(login, invalidPassword);
         try {
             new WebDriverWait(driver, wdwTimeout)
-                    .until(ExpectedConditions.presenceOfElementLocated(
-                            By.xpath("//div[@class='login-panel']//form[@method='POST']//h1[text()='Вход']")
+                    .until(ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("//div[contains(@class, 'b-login')]/div[@class='b-login__header']")
                     ));
         } catch (TimeoutException e) {
             Assert.fail();
@@ -208,6 +208,18 @@ public class EmailTest {
                 By.xpath("(//div[@data-name='spam']//span[contains(@class, 'b-toolbar__btn__text')])[1]")
         );
         archiveElem.click();
+        WebElement approveElem = null;
+        try {
+            approveElem = new WebDriverWait(driver, wdwTimeout)
+                    .until(ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("//button[@data-id='approve']/span[@class='btn__text']")
+                    ));
+        } catch (TimeoutException e) {
+
+        }
+        if (approveElem != null) {
+            approveElem.click();
+        }
         Thread.sleep(5000);
         try {
             checkboxElem.isDisplayed();
@@ -223,29 +235,32 @@ public class EmailTest {
         sendToSpam();
     }
 
-    @Test
-    public void testClearSpam() throws InterruptedException {
-        loginSuccess();
-        sendToSpam();
+    private void clearSpam() throws InterruptedException {
         WebElement clearSpamElem = driver.findElement(
-            By.xpath("//a[@href='/messages/spam/']/span[@data-name='clear-folder']")
+                By.xpath("//a[@href='/messages/spam/']/span[@data-name='clear-folder']")
         );
         clearSpamElem.click();
+
         WebElement confirmClearElem = new WebDriverWait(driver, wdwTimeout)
                 .until(ExpectedConditions.visibilityOfElementLocated(
                         By.xpath("//div[@class='balloon__message']//span[@class='btn__text']")
                 ));
         confirmClearElem.click();
         Thread.sleep(5000);
+    }
+                                                                                            
+    @Test
+    public void testClearSpam() throws InterruptedException {
+        loginSuccess();
+        sendToSpam();
+        clearSpam();
         try {
-            clearSpamElem.isDisplayed();
-        } catch (StaleElementReferenceException e) {
+            new WebDriverWait(driver, wdwTimeout).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@href='/messages/spam/']/span[@data-name='clear-folder']")));
+        } catch (Exception e) {
             return;
         }
         Assert.fail();
     }
-
-    //TODO the following
 
     @Test
     public void testSaveToDraft() throws InterruptedException {
@@ -254,13 +269,13 @@ public class EmailTest {
         try {
             WebElement saveElem = driver.findElement(
                     By.xpath("//div[@class='b-toolbar__item']//div[@data-name='saveDraft']" +
-                             "/span[@class='b-toolbar__btn__text']")
+                            "/span[@class='b-toolbar__btn__text']")
             );
             saveElem.click();
             new WebDriverWait(driver, wdwTimeout)
                     .until(ExpectedConditions.presenceOfElementLocated(
-                       By.xpath("//div[@class='b-toolbar__item']/div[@class='b-toolbar__message' and @data-mnemo='saveStatus' " +
-                                                                                                "and @style != 'display:none;'][1]")
+                            By.xpath("//div[@class='b-toolbar__item']/div[@class='b-toolbar__message' and @data-mnemo='saveStatus' " +
+                                    "and @style != 'display:none;'][1]")
                     ));
         } catch (TimeoutException e) {
             Assert.fail();
@@ -270,24 +285,30 @@ public class EmailTest {
     @Test
     public void testReply() throws InterruptedException {
         loginSuccess();
-        try {
-            WebElement messageElem = driver.findElement(
-                    By.xpath("//div[@id='b-letters']/div[@class='b-datalists']//div[contains(@class, 'b-datalist__item ')][1]")
-            );
-            messageElem.click();
-            WebElement bodyElem = new WebDriverWait(driver, wdwTimeout)
-                    .until(ExpectedConditions.presenceOfElementLocated(
-                            By.xpath("//div[@class='composeEditorFrame']")
-                    ));
-            bodyElem.sendKeys(body);
-            driver.findElement(By.xpath("//span[@class='b-toolbar__btn__text' and text()='Отправить'][1]")).click();
-            new WebDriverWait(driver, wdwTimeout)
-                    .until(ExpectedConditions.presenceOfElementLocated(
-                            By.xpath("//div[@class='message-sent__title]")
-                    ));
-        } catch (TimeoutException e) {
-            Assert.fail();
-        }
+        WebElement messageElem = driver.findElement(
+                By.xpath("//div[@id='b-letters']/div[@class='b-datalists']//div[contains(@class, 'b-datalist__item ')][1]")
+        );
+        messageElem.click();
+        WebElement openBodyElem = new WebDriverWait(driver, wdwTimeout)
+                .until(ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath("//span[@data-compose-act='reply']")
+                ));
+        openBodyElem.click();
+        WebElement bodyIframe =
+                new WebDriverWait(driver, wdwTimeout)
+                .until(ExpectedConditions.presenceOfElementLocated(
+                        By.xpath("//iframe[contains(@id, 'composeEditor')]")
+                        ));
+
+        driver.switchTo().frame(bodyIframe);
+        WebElement bodyElem = driver.findElement(By.xpath("//body[contains(@class, 'mceContentBody')]"));
+        bodyElem.sendKeys(body);
+        driver.switchTo().defaultContent();
+        driver.findElement(By.xpath("//div[@data-name='send']/span[contains(@class, 'b-toolbar__btn__text')]")).click();
+        new WebDriverWait(driver, wdwTimeout)
+                .until(ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath("//div[@class='message-sent__title']")
+                ));
     }
 
     @Test
@@ -297,7 +318,7 @@ public class EmailTest {
                 By.xpath("//div[@id='b-letters']/div[@class='b-datalists']//div[contains(@class, 'js-item-checkbox b-datalist__item__cbx')][1]")
         );
         checkboxElem.click();
-        wait(5);
+        Thread.sleep(5000);
         try {
             new WebDriverWait(driver, wdwTimeout)
                     .until(ExpectedConditions.presenceOfElementLocated(
