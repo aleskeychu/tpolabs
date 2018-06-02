@@ -1,0 +1,12 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,Latency,IdleTime,Connect
+1527900484857,259,HTTP Request,200,OK,Thread Group 1-1,text,true,,367,157,1,1,259,0,3
+1527900487861,279,HTTP Request,200,OK,Thread Group 1-1,text,true,,367,157,1,1,279,0,1
+1527900490862,810,HTTP Request,200,OK,Thread Group 1-1,text,true,,367,157,1,1,810,0,0
+1527900493861,277,HTTP Request,200,OK,Thread Group 1-1,text,true,,367,157,1,1,277,0,1
+1527900496862,276,HTTP Request,200,OK,Thread Group 1-1,text,true,,367,157,1,1,276,0,1
+1527900499863,282,HTTP Request,200,OK,Thread Group 1-1,text,true,,367,157,1,1,282,0,0
+1527900502862,280,HTTP Request,200,OK,Thread Group 1-1,text,true,,367,157,1,1,280,0,0
+1527900505861,257,HTTP Request,200,OK,Thread Group 1-1,text,true,,367,157,1,1,257,0,1
+1527900508862,279,HTTP Request,200,OK,Thread Group 1-1,text,true,,367,157,1,1,279,0,0
+1527900511862,257,HTTP Request,200,OK,Thread Group 1-1,text,true,,367,157,1,1,257,0,1
+1527900514854,288,HTTP Request,200,OK,Thread Group 1-1,text,true,,367,157,1,1,288,0,1
